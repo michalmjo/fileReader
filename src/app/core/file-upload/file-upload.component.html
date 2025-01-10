@@ -1,0 +1,4 @@
+<input type="file" (change)="onFileSelected($event)" />
+<div *ngIf="images.length > 0">
+  <img *ngFor="let image of images" [src]="image" alt="CBZ Image" />
+</div>
