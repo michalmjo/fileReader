@@ -1,0 +1,9 @@
+@mixin theme-colors($property, $variable) {
+  #{$property}: var(--#{$variable});
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

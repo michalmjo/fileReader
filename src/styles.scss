@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import "./styles/abstracts/variables";
+@import "./styles/abstracts/mixins";
+
+@import "./styles/themes/dark-theme";
+@import "./styles/themes/light-theme";
+@import "./styles/components/buttons";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+.flex-center {
+  @include flex-center;
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.wrapper {
+  margin: 0 auto;
+  width: 1240px;
+}
+.flex-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mr-5 {
+  margin: 5px;
+}
+li {
+  cursor: pointer;
+}

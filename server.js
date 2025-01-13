@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
 const { execFile } = require("child_process");
-const fs = require("fs"); // Dodajemy fs do obsługi systemu plików
+const fs = require("fs");
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
@@ -23,48 +23,68 @@ app.post("/upload", upload.single("file"), (req, res) => {
   const filePath = req.file.path;
   const fileName = req.file.originalname;
 
-  // Wyciąganie numeru z nazwy pliku
-  const match = fileName.match(/(\d+)\.cbr$/); // Wyszukuje liczbę przed rozszerzeniem .cbr
+  // Wyciąganie numeru z nazwy pliku (np. 65 z "65.cbr")
+  const match = fileName.match(/(\d+)\.cbr$/);
   if (!match) {
     return res.status(400).send("File name doesn't contain a valid number.");
   }
   const dirNumber = match[1]; // Numer wyciągnięty z nazwy pliku
 
-  // Tworzenie katalogu z numerem
+  // Tworzenie katalogu z numerem (bez podkatalogu)
   const outputDir = path.join(__dirname, "extracted", dirNumber);
 
   // Sprawdzamy, czy katalog istnieje, jeśli nie, to go tworzymy
-  fs.mkdir(outputDir, { recursive: true }, (err) => {
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  // Uruchamianie komendy 7z, wypakowywanie plików do katalogu docelowego
+  execFile(
+    "7z",
+    ["x", "-y", filePath, `-o${outputDir}`], // Rozpakowanie do katalogu o numerze
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error("Error during extraction:", err);
+        console.error("stderr:", stderr);
+        return res.status(500).send("Error extracting file");
+      }
+
+      console.log("Extraction output:", stdout);
+
+      // Zwracanie listy plików w katalogu
+      fs.readdir(outputDir, (err, files) => {
+        if (err) {
+          console.error("Error reading extracted directory:", err);
+          return res.status(500).send("Error reading extracted files");
+        } else {
+          // Filtrujemy tylko pliki graficzne
+          const imageFiles = files.filter((file) =>
+            /\.(jpg|jpeg|png)$/i.test(file)
+          );
+          const imageUrls = imageFiles.map(
+            (file) => `/extracted/${dirNumber}/${file}`
+          );
+          res.json(imageUrls); // Zwracamy listę plików
+        }
+      });
+    }
+  );
+});
+
+app.get("/extracted/:dirNumber", (req, res) => {
+  const dirNumber = req.params.dirNumber;
+  const outputDir = path.join(__dirname, "extracted", dirNumber);
+
+  fs.readdir(outputDir, (err, files) => {
     if (err) {
-      console.error("Error creating directory:", err);
-      return res.status(500).send("Error creating directory");
+      return res.status(500).send("Error reading extracted directory");
     }
 
-    // Uruchamianie komendy 7z
-    execFile(
-      "7z",
-      ["x", "-y", filePath, "-o" + outputDir],
-      (err, stdout, stderr) => {
-        if (err) {
-          console.error("Error during extraction:", err);
-          console.error("stderr:", stderr);
-          return res.status(500).send("Error extracting file");
-        }
-        console.log("Extraction output:", stdout);
-
-        // Dodanie kodu do sprawdzania plików w folderze 'extracted'
-        fs.readdir(outputDir, (err, files) => {
-          if (err) {
-            console.error("Error reading extracted directory:", err);
-            return res.status(500).send("Error reading extracted files");
-          } else {
-            console.log("Extracted files:", files); // Wyświetlanie listy plików w katalogu
-          }
-        });
-
-        res.send("File extracted successfully");
-      }
+    const imageFiles = files.filter((file) => /\.(jpg|jpeg|png)$/i.test(file));
+    const imageUrls = imageFiles.map(
+      (file) => `/extracted/${dirNumber}/${file}`
     );
+    res.json(imageUrls); // Zwracamy URL-e obrazów
   });
 });
 

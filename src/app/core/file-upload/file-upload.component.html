@@ -2,3 +2,20 @@
 <div *ngIf="images.length > 0">
   <img *ngFor="let image of images" [src]="image" alt="CBZ Image" />
 </div>
+
+<div *ngIf="extractedFiles.length > 0">
+  <img *ngFor="let image of extractedFiles" [src]="image" alt="CBR Image" />
+</div>
+
+<!--  -->
+<h2>Nowa</h2>
+
+<input type="file" (change)="onFileSelected($event)" />
+<div *ngIf="images.length > 0">
+  <div *ngFor="let image of extractedFiles">
+    <img [src]="image" alt="Image" />
+  </div>
+</div>
+
+<div *ngIf="isLoading">Ładowanie...</div>
+<div *ngIf="error">{{ error }}</div>

@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class FileHandlerService {
+  extractedFiles: any = [];
+
   constructor(private http: HttpClient) {}
 
   /**
@@ -46,26 +48,64 @@ export class FileHandlerService {
   }
 
   /**
-   * Wysyła plik do backendu.
-   * @param event - Zdarzenie zmiany na input[type="file"].
+   * Wysyła plik CBR do serwera i odbiera URL-e rozpakowanych obrazów.
+   * @param file - Plik CBR do przesłania.
    */
-  uploadFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-
-    const file = input.files[0];
+  uploadFilse(file: File): Promise<string[]> {
     const formData = new FormData();
     formData.append('file', file);
 
-    this.http.post('http://localhost:3000/upload', formData).subscribe({
-      next: (response) => {
-        console.log('File uploaded successfully:', response);
-        alert('File uploaded successfully');
-      },
-      error: (err) => {
-        console.error('Upload error:', err);
-        alert('File upload failed');
-      },
+    return this.http
+      .post<string[]>('http://localhost:3000/upload', formData)
+      .toPromise()
+      .then((response) => {
+        // Upewniamy się, że odpowiedź nie jest undefined
+        return response || []; // Zwracamy pustą tablicę, jeśli odpowiedź jest undefined
+      })
+      .catch((err) => {
+        console.error('Błąd podczas przesyłania pliku:', err);
+        return []; // Zwracamy pustą tablicę w przypadku błędu
+      });
+  }
+
+  uploadFile(file: File): Promise<string[]> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    return this.http
+      .post<string[]>('http://localhost:3000/upload', formData)
+      .toPromise()
+      .then((response) => {
+        console.log('Odpowiedź z serwera:', response);
+        if (Array.isArray(response) && response.length > 0) {
+          return response;
+        } else {
+          throw new Error('Serwer nie zwrócił danych obrazów.');
+        }
+      })
+      .catch((error) => {
+        console.error('Błąd serwera:', error);
+        throw error;
+      });
+  }
+
+  /**
+   * Wysyła żądanie do serwera po obrazy w danym katalogu.
+   * @param dirNumber - Numer katalogu.
+   * @returns Promise z tablicą URL-i obrazów.
+   */
+  getImages(dirNumber: string): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .get<string[]>(`http://localhost:3000/extracted/${dirNumber}`)
+        .subscribe({
+          next: (response) => {
+            resolve(response);
+          },
+          error: (err) => {
+            reject('Błąd pobierania obrazów: ' + err);
+          },
+        });
     });
   }
 }

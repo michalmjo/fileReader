@@ -1,6 +1,6 @@
-<app-file-upload></app-file-upload>
-<p>
-  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta ut eius
-  corporis dolore enim, dicta cupiditate molestias, tempora accusamus veniam
-  magni hic quae, laudantium totam. Error non doloribus officiis dicta.
-</p>
+<app-header></app-header>
+<div class="wrapper">
+  <router-outlet></router-outlet>
+</div>
+<button (click)="changeTheme('light')">Light Theme</button>
+<button (click)="changeTheme('dark')">Dark Theme</button>

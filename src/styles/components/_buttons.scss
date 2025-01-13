@@ -1,0 +1,8 @@
+button {
+  @include theme-colors("background-color", "primary-color");
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
