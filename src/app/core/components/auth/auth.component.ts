@@ -17,6 +17,7 @@ export class AuthComponent implements OnInit {
   submitted = false;
   isLoading: boolean = false;
   isLoginMode = true;
+  error?: string;
 
   constructor(private fb: FormBuilder, private authService: UserAuthService) {
     this.loginForm = this.fb.group({
@@ -33,24 +34,32 @@ export class AuthComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
+    this.isLoading = true;
 
     const { email, password } = this.loginForm.value;
-    console.log(email);
-    console.log(password);
-
-    if (this.isLoginMode) {
-      console.log('Tryb Logowania');
-      this.authService.logIn(email, password).subscribe((x) => console.log(x));
-    } else {
-      console.log('Rejestracja');
-      this.authService
-        .register(email, password)
-        .subscribe((x) => console.log(x));
-    }
 
     if (this.loginForm.invalid) {
+      this.isLoading = false; // Wyłącz ładowanie w przypadku błędu
       return;
     }
+
+    const authObservable = this.isLoginMode
+      ? this.authService.logIn(email, password)
+      : this.authService.register(email, password);
+
+    authObservable.subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.error = '';
+        console.log('Sukces:', response);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Błąd:', error);
+        this.error = error;
+        console.log(this.error);
+      },
+    });
 
     console.log('Form Data:', this.loginForm.value);
   }
