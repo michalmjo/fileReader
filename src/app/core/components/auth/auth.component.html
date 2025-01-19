@@ -32,6 +32,15 @@
       </div>
     </div>
 
-    <button type="submit">Zaloguj się</button>
+    <button type="submit">
+      {{ isLoginMode ? " Zaloguj się" : "Zarejestruj się" }}
+    </button>
   </form>
+  <p>Nie masz Konta ?</p>
+  <button type="button" (click)="changeMode()">Zarejestruj się</button>
+  <br />
+  <small>Przejdz do logowania </small>
+  <span style="cursor: pointer; border: 1px solid white; border-radius: 5px"
+    >Zaloguj się</span
+  >
 </div>

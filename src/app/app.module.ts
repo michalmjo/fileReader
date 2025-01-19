@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HeaderComponent } from './core/components/header/header.component';
 import { AuthComponent } from './core/components/auth/auth.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoadingSpinnerComponent } from './core/components/features/loading-spinner/loading-spinner.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FileUploadComponent,
     HeaderComponent,
     AuthComponent,
+    LoadingSpinnerComponent,
   ],
   imports: [
     BrowserModule,

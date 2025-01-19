@@ -25,7 +25,7 @@
       "cbr": ["src/typings/cbr.d.ts"]
     }
   },
-  "include": ["src/**/*", "unrar-js.d.ts"],
+  "include": ["src/**/*", "unrar-js.d.ts", "webpack.config.js"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

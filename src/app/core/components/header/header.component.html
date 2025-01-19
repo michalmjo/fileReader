@@ -6,8 +6,22 @@
       <li routerLink="/home" class="mr-5">Upload</li>
       <li routerLink="/home" class="mr-5">Upload</li>
     </ul>
-    <ul>
-      <li>Change Theme</li>
+    <ul class="navbar-options">
+      <li>
+        <div class="theme-toggle">
+          <input
+            type="checkbox"
+            id="theme-switch"
+            (change)="changeTheme()"
+            [checked]="theme === 'dark'"
+          />
+          <label for="theme-switch">
+            <span class="icon sun">☀️</span>
+            <span class="icon moon">🌙</span>
+            <span class="toggle"></span>
+          </label>
+        </div>
+      </li>
       <li routerLink="/auth">Login</li>
     </ul>
   </nav>
