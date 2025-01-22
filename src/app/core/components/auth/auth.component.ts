@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { UserAuthService } from './service/user-auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -19,7 +20,11 @@ export class AuthComponent implements OnInit {
   isLoginMode = true;
   error?: string;
 
-  constructor(private fb: FormBuilder, private authService: UserAuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: UserAuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -43,18 +48,24 @@ export class AuthComponent implements OnInit {
       return;
     }
 
+    console.log(this.isLoginMode);
+    console.log(email, password);
+
     const authObservable = this.isLoginMode
       ? this.authService.logIn(email, password)
       : this.authService.register(email, password);
 
     authObservable.subscribe({
       next: (response) => {
+        console.log(response);
         this.isLoading = false;
         this.error = '';
         console.log('Sukces:', response);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
+        console.log(error);
         console.error('Błąd:', error);
         this.error = error;
         console.log(this.error);

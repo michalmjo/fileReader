@@ -1,7 +1,7 @@
 <div class="wrap">
   <nav class="main-nav">
     <ul class="flex-row mr-5">
-      <li routerLink="/home" class="mr-5">Upload</li>
+      <li routerLink="/home" class="mr-5">Home</li>
       <li routerLink="/upload" class="mr-5">Upload</li>
       <li routerLink="/home" class="mr-5">Upload</li>
       <li routerLink="/home" class="mr-5">Upload</li>
@@ -22,7 +22,8 @@
           </label>
         </div>
       </li>
-      <li routerLink="/auth">Login</li>
+      <li *ngIf="!isAuth" routerLink="/auth">Login</li>
+      <li *ngIf="isAuth" (click)="onLogOut()">Wyloguj</li>
     </ul>
   </nav>
 </div>
