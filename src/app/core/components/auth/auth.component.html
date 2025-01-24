@@ -3,6 +3,17 @@
     <app-loading-spinner></app-loading-spinner>
   </div>
 
+  <div class="container">
+    <div class="notifications">
+      <app-notification
+        *ngFor="let message of notifications; let i = index"
+        [message]="message"
+        [index]="i"
+        (closeNotification)="removeNotification($event)"
+      ></app-notification>
+    </div>
+  </div>
+
   <div *ngIf="error" class="errorMessage">
     {{ error }}
   </div>

@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { UserAuthService } from './service/user-auth.service';
 import { Router } from '@angular/router';
+import { NotificationService } from 'src/app/shared/notification/services/notification.service';
 
 @Component({
   selector: 'app-auth',
@@ -20,11 +21,17 @@ export class AuthComponent implements OnInit {
   isLoginMode = true;
   error?: string;
 
+  notifications: string[] = [];
+
   constructor(
     private fb: FormBuilder,
     private authService: UserAuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
+    this.notificationService.getNotifications().subscribe((notifications) => {
+      this.notifications = notifications;
+    });
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -35,6 +42,10 @@ export class AuthComponent implements OnInit {
 
   get f(): { [key: string]: any } {
     return this.loginForm.controls;
+  }
+
+  removeNotification(index: any) {
+    this.notificationService.removeNotification(index);
   }
 
   onSubmit(): void {
@@ -67,6 +78,7 @@ export class AuthComponent implements OnInit {
         this.isLoading = false;
         console.log(error);
         console.error('Błąd:', error);
+        this.notificationService.addNotification(error);
         this.error = error;
         console.log(this.error);
       },

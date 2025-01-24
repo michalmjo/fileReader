@@ -11,6 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingSpinnerComponent } from './core/components/features/loading-spinner/loading-spinner.component';
 import { HomeComponent } from './core/components/home/home.component';
 import { AuthInterceptorService } from './core/components/auth/service/auth-interceptor.service';
+import { NotificationComponent } from './shared/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { AuthInterceptorService } from './core/components/auth/service/auth-inte
     AuthComponent,
     LoadingSpinnerComponent,
     HomeComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,
